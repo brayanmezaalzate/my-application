@@ -1,0 +1,437 @@
+<html>
+<head>
+<title>Screens.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#191a1c">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Screens.kt</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">myapplication</span>
+
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">compose</span><span class="s2">.</span><span class="s1">foundation</span><span class="s2">.</span><span class="s1">layout</span><span class="s2">.*</span>
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">compose</span><span class="s2">.</span><span class="s1">foundation</span><span class="s2">.</span><span class="s1">lazy</span><span class="s2">.</span><span class="s1">LazyColumn</span>
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">compose</span><span class="s2">.</span><span class="s1">foundation</span><span class="s2">.</span><span class="s1">lazy</span><span class="s2">.</span><span class="s1">items</span>
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">compose</span><span class="s2">.</span><span class="s1">material3</span><span class="s2">.*</span>
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">compose</span><span class="s2">.</span><span class="s1">runtime</span><span class="s2">.*</span>
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">compose</span><span class="s2">.</span><span class="s1">ui</span><span class="s2">.</span><span class="s1">Alignment</span>
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">compose</span><span class="s2">.</span><span class="s1">ui</span><span class="s2">.</span><span class="s1">Modifier</span>
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">compose</span><span class="s2">.</span><span class="s1">ui</span><span class="s2">.</span><span class="s1">graphics</span><span class="s2">.</span><span class="s1">Color</span>
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">compose</span><span class="s2">.</span><span class="s1">ui</span><span class="s2">.</span><span class="s1">unit</span><span class="s2">.</span><span class="s1">dp</span>
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">navigation</span><span class="s2">.</span><span class="s1">NavController</span>
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">text</span><span class="s2">.</span><span class="s1">SimpleDateFormat</span>
+<span class="s1">import java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.*</span>
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">compose</span><span class="s2">.</span><span class="s1">runtime</span><span class="s2">.</span><span class="s1">getValue</span>
+<span class="s1">import androidx</span><span class="s2">.</span><span class="s1">compose</span><span class="s2">.</span><span class="s1">runtime</span><span class="s2">.</span><span class="s1">setValue</span>
+
+
+<span class="s3">// --- 1. PANTALLA PRINCIPAL (HOME) ---</span>
+<span class="s1">@Composable</span>
+<span class="s0">fun </span><span class="s1">HomeScreen</span><span class="s2">(</span><span class="s1">navController: NavController</span><span class="s2">, </span><span class="s1">viewModel: TaskViewModel</span><span class="s2">) {</span>
+    <span class="s3">// Observamos las tareas locales para calcular el resumen en tiempo real</span>
+    <span class="s0">val </span><span class="s1">tasks by viewModel</span><span class="s2">.</span><span class="s1">localTasks</span><span class="s2">.</span><span class="s1">collectAsState</span><span class="s2">()</span>
+
+    <span class="s0">val </span><span class="s1">totalTareas </span><span class="s2">= </span><span class="s1">tasks</span><span class="s2">.</span><span class="s1">size</span>
+    <span class="s3">// Evaluamos si está completada (asumiendo que guardas &quot;1&quot; o &quot;true&quot; en tu SQLite para completadas)</span>
+    <span class="s0">val </span><span class="s1">completadas </span><span class="s2">= </span><span class="s1">tasks</span><span class="s2">.</span><span class="s1">count </span><span class="s2">{ </span><span class="s1">it</span><span class="s2">[</span><span class="s4">&quot;completed&quot;</span><span class="s2">] == </span><span class="s4">&quot;1&quot; </span><span class="s2">|| </span><span class="s1">it</span><span class="s2">[</span><span class="s4">&quot;completed&quot;</span><span class="s2">] == </span><span class="s4">&quot;true&quot; </span><span class="s2">}</span>
+    <span class="s0">val </span><span class="s1">pendientes </span><span class="s2">= </span><span class="s1">totalTareas </span><span class="s2">- </span><span class="s1">completadas</span>
+
+    <span class="s1">Column</span><span class="s2">(</span>
+        <span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span>
+            <span class="s2">.</span><span class="s1">fillMaxSize</span><span class="s2">()</span>
+            <span class="s2">.</span><span class="s1">padding</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">),</span>
+        <span class="s1">horizontalAlignment </span><span class="s2">= </span><span class="s1">Alignment</span><span class="s2">.</span><span class="s1">CenterHorizontally</span><span class="s2">,</span>
+        <span class="s1">verticalArrangement </span><span class="s2">= </span><span class="s1">Arrangement</span><span class="s2">.</span><span class="s1">Center</span>
+    <span class="s2">) {</span>
+        <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Gestión de Tareas&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">headlineMedium</span><span class="s2">)</span>
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">24</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+        <span class="s3">// Tarjeta de Resumen Rápido exigido por la rúbrica</span>
+        <span class="s1">Card</span><span class="s2">(</span>
+            <span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">().</span><span class="s1">padding</span><span class="s2">(</span><span class="s1">horizontal </span><span class="s2">= </span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">),</span>
+            <span class="s1">colors </span><span class="s2">= </span><span class="s1">CardDefaults</span><span class="s2">.</span><span class="s1">cardColors</span><span class="s2">(</span><span class="s1">containerColor </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">colorScheme</span><span class="s2">.</span><span class="s1">surfaceVariant</span><span class="s2">)</span>
+        <span class="s2">) {</span>
+            <span class="s1">Column</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">padding</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">), </span><span class="s1">horizontalAlignment </span><span class="s2">= </span><span class="s1">Alignment</span><span class="s2">.</span><span class="s1">CenterHorizontally</span><span class="s2">) {</span>
+                <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Resumen de Tareas&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">titleMedium</span><span class="s2">)</span>
+                <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+                <span class="s1">Row</span><span class="s2">(</span>
+                    <span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">(),</span>
+                    <span class="s1">horizontalArrangement </span><span class="s2">= </span><span class="s1">Arrangement</span><span class="s2">.</span><span class="s1">SpaceEvenly</span>
+                <span class="s2">) {</span>
+                    <span class="s1">Column</span><span class="s2">(</span><span class="s1">horizontalAlignment </span><span class="s2">= </span><span class="s1">Alignment</span><span class="s2">.</span><span class="s1">CenterHorizontally</span><span class="s2">) {</span>
+                        <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;</span><span class="s0">$</span><span class="s1">totalTareas</span><span class="s4">&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">titleLarge</span><span class="s2">)</span>
+                        <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Total&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">bodySmall</span><span class="s2">)</span>
+                    <span class="s2">}</span>
+                    <span class="s1">Column</span><span class="s2">(</span><span class="s1">horizontalAlignment </span><span class="s2">= </span><span class="s1">Alignment</span><span class="s2">.</span><span class="s1">CenterHorizontally</span><span class="s2">) {</span>
+                        <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;</span><span class="s0">$</span><span class="s1">pendientes</span><span class="s4">&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">titleLarge</span><span class="s2">, </span><span class="s1">color </span><span class="s2">= </span><span class="s1">Color</span><span class="s2">(</span><span class="s5">0xFFD32F2F</span><span class="s2">))</span>
+                        <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Pendientes&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">bodySmall</span><span class="s2">)</span>
+                    <span class="s2">}</span>
+                    <span class="s1">Column</span><span class="s2">(</span><span class="s1">horizontalAlignment </span><span class="s2">= </span><span class="s1">Alignment</span><span class="s2">.</span><span class="s1">CenterHorizontally</span><span class="s2">) {</span>
+                        <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;</span><span class="s0">$</span><span class="s1">completadas</span><span class="s4">&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">titleLarge</span><span class="s2">, </span><span class="s1">color </span><span class="s2">= </span><span class="s1">Color</span><span class="s2">(</span><span class="s5">0xFF388E3C</span><span class="s2">))</span>
+                        <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Completadas&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">bodySmall</span><span class="s2">)</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">32</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+        <span class="s1">Button</span><span class="s2">(</span><span class="s1">onClick </span><span class="s2">= { </span><span class="s1">navController</span><span class="s2">.</span><span class="s1">navigate</span><span class="s2">(</span><span class="s4">&quot;create_step_1&quot;</span><span class="s2">) }, </span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">()) {</span>
+            <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Crear Nueva Tarea&quot;</span><span class="s2">)</span>
+        <span class="s2">}</span>
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+        <span class="s1">Button</span><span class="s2">(</span><span class="s1">onClick </span><span class="s2">= { </span><span class="s1">navController</span><span class="s2">.</span><span class="s1">navigate</span><span class="s2">(</span><span class="s4">&quot;local_tasks&quot;</span><span class="s2">) }, </span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">()) {</span>
+            <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Ver Mis Tareas&quot;</span><span class="s2">)</span>
+        <span class="s2">}</span>
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+        <span class="s1">OutlinedButton</span><span class="s2">(</span><span class="s1">onClick </span><span class="s2">= { </span><span class="s1">navController</span><span class="s2">.</span><span class="s1">navigate</span><span class="s2">(</span><span class="s4">&quot;api_tasks&quot;</span><span class="s2">) }, </span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">()) {</span>
+            <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Tareas de la API&quot;</span><span class="s2">)</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+
+<span class="s3">// --- 2. PANTALLA CREAR TAREA - PASO 1 ---</span>
+<span class="s1">@OptIn</span><span class="s2">(</span><span class="s1">ExperimentalMaterial3Api::</span><span class="s0">class</span><span class="s2">)</span>
+<span class="s1">@Composable</span>
+<span class="s0">fun </span><span class="s1">CreateTaskStep1Screen</span><span class="s2">(</span><span class="s1">navController: NavController</span><span class="s2">, </span><span class="s1">viewModel: TaskViewModel</span><span class="s2">) {</span>
+    <span class="s0">var </span><span class="s1">title by remember </span><span class="s2">{ </span><span class="s1">mutableStateOf</span><span class="s2">(</span><span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftTitle</span><span class="s2">) }</span>
+    <span class="s0">var </span><span class="s1">description by remember </span><span class="s2">{ </span><span class="s1">mutableStateOf</span><span class="s2">(</span><span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftDescription</span><span class="s2">) }</span>
+    <span class="s0">var </span><span class="s1">expanded by remember </span><span class="s2">{ </span><span class="s1">mutableStateOf</span><span class="s2">(</span><span class="s0">false</span><span class="s2">) }</span>
+    <span class="s0">val </span><span class="s1">priorities </span><span class="s2">= </span><span class="s1">listOf</span><span class="s2">(</span><span class="s4">&quot;Alta&quot;</span><span class="s2">, </span><span class="s4">&quot;Media&quot;</span><span class="s2">, </span><span class="s4">&quot;Baja&quot;</span><span class="s2">)</span>
+    <span class="s0">var </span><span class="s1">selectedPriority by remember </span><span class="s2">{ </span><span class="s1">mutableStateOf</span><span class="s2">(</span><span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftPriority</span><span class="s2">) }</span>
+
+    <span class="s1">Column</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">padding</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">).</span><span class="s1">fillMaxSize</span><span class="s2">()) {</span>
+        <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Paso 1: Detalles de la Tarea&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">titleLarge</span><span class="s2">)</span>
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+        <span class="s1">OutlinedTextField</span><span class="s2">(</span>
+            <span class="s1">value </span><span class="s2">= </span><span class="s1">title</span><span class="s2">,</span>
+            <span class="s1">onValueChange </span><span class="s2">= { </span><span class="s1">title </span><span class="s2">= </span><span class="s1">it</span><span class="s2">; </span><span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftTitle </span><span class="s2">= </span><span class="s1">it </span><span class="s2">},</span>
+            <span class="s1">label </span><span class="s2">= { </span><span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Título&quot;</span><span class="s2">) },</span>
+            <span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">()</span>
+        <span class="s2">)</span>
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+        <span class="s1">OutlinedTextField</span><span class="s2">(</span>
+            <span class="s1">value </span><span class="s2">= </span><span class="s1">description</span><span class="s2">,</span>
+            <span class="s1">onValueChange </span><span class="s2">= { </span><span class="s1">description </span><span class="s2">= </span><span class="s1">it</span><span class="s2">; </span><span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftDescription </span><span class="s2">= </span><span class="s1">it </span><span class="s2">},</span>
+            <span class="s1">label </span><span class="s2">= { </span><span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Descripción&quot;</span><span class="s2">) },</span>
+            <span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">()</span>
+        <span class="s2">)</span>
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+        <span class="s3">// Selector de prioridad (Dropdown)</span>
+        <span class="s1">ExposedDropdownMenuBox</span><span class="s2">(</span><span class="s1">expanded </span><span class="s2">= </span><span class="s1">expanded</span><span class="s2">, </span><span class="s1">onExpandedChange </span><span class="s2">= { </span><span class="s1">expanded </span><span class="s2">= !</span><span class="s1">expanded </span><span class="s2">}) {</span>
+            <span class="s1">OutlinedTextField</span><span class="s2">(</span>
+                <span class="s1">value </span><span class="s2">= </span><span class="s1">selectedPriority</span><span class="s2">,</span>
+                <span class="s1">onValueChange </span><span class="s2">= {},</span>
+                <span class="s1">readOnly </span><span class="s2">= </span><span class="s0">true</span><span class="s2">,</span>
+                <span class="s1">label </span><span class="s2">= { </span><span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Prioridad&quot;</span><span class="s2">) },</span>
+                <span class="s1">trailingIcon </span><span class="s2">= { </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s2">.</span><span class="s1">TrailingIcon</span><span class="s2">(</span><span class="s1">expanded</span><span class="s2">) },</span>
+                <span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">menuAnchor</span><span class="s2">().</span><span class="s1">fillMaxWidth</span><span class="s2">()</span>
+            <span class="s2">)</span>
+            <span class="s1">ExposedDropdownMenu</span><span class="s2">(</span><span class="s1">expanded </span><span class="s2">= </span><span class="s1">expanded</span><span class="s2">, </span><span class="s1">onDismissRequest </span><span class="s2">= { </span><span class="s1">expanded </span><span class="s2">= </span><span class="s0">false </span><span class="s2">}) {</span>
+                <span class="s1">priorities</span><span class="s2">.</span><span class="s1">forEach </span><span class="s2">{ </span><span class="s1">selection </span><span class="s2">-&gt;</span>
+                    <span class="s1">DropdownMenuItem</span><span class="s2">(</span>
+                        <span class="s1">text </span><span class="s2">= { </span><span class="s1">Text</span><span class="s2">(</span><span class="s1">selection</span><span class="s2">) },</span>
+                        <span class="s1">onClick </span><span class="s2">= {</span>
+                            <span class="s1">selectedPriority </span><span class="s2">= </span><span class="s1">selection</span>
+                            <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftPriority </span><span class="s2">= </span><span class="s1">selection</span>
+                            <span class="s1">expanded </span><span class="s2">= </span><span class="s0">false</span>
+                        <span class="s2">}</span>
+                    <span class="s2">)</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">weight</span><span class="s2">(</span><span class="s5">1f</span><span class="s2">))</span>
+
+        <span class="s3">// Validaciones en tiempo real: botón deshabilitado si está vacío</span>
+        <span class="s1">Button</span><span class="s2">(</span>
+            <span class="s1">onClick </span><span class="s2">= { </span><span class="s1">navController</span><span class="s2">.</span><span class="s1">navigate</span><span class="s2">(</span><span class="s4">&quot;create_step_2&quot;</span><span class="s2">) },</span>
+            <span class="s1">enabled </span><span class="s2">= </span><span class="s1">title</span><span class="s2">.</span><span class="s1">isNotBlank</span><span class="s2">() &amp;&amp; </span><span class="s1">description</span><span class="s2">.</span><span class="s1">isNotBlank</span><span class="s2">(),</span>
+            <span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">()</span>
+        <span class="s2">) {</span>
+            <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Siguiente&quot;</span><span class="s2">)</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+
+<span class="s3">// --- 3. PANTALLA CREAR TAREA - PASO 2 ---</span>
+<span class="s1">@OptIn</span><span class="s2">(</span><span class="s1">ExperimentalMaterial3Api::</span><span class="s0">class</span><span class="s2">)</span>
+<span class="s1">@Composable</span>
+<span class="s0">fun </span><span class="s1">CreateTaskStep2Screen</span><span class="s2">(</span><span class="s1">navController: NavController</span><span class="s2">, </span><span class="s1">viewModel: TaskViewModel</span><span class="s2">) {</span>
+    <span class="s0">val </span><span class="s1">datePickerState </span><span class="s2">= </span><span class="s1">rememberDatePickerState</span><span class="s2">()</span>
+    <span class="s0">var </span><span class="s1">errorMessage by remember </span><span class="s2">{ </span><span class="s1">mutableStateOf</span><span class="s2">(</span><span class="s4">&quot;&quot;</span><span class="s2">) }</span>
+
+    <span class="s1">Column</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">padding</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">).</span><span class="s1">fillMaxSize</span><span class="s2">()) {</span>
+        <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Paso 2: Fecha Límite&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">titleLarge</span><span class="s2">)</span>
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+        <span class="s3">// DatePicker oficial de Material 3</span>
+        <span class="s1">DatePicker</span><span class="s2">(</span><span class="s1">state </span><span class="s2">= </span><span class="s1">datePickerState</span><span class="s2">, </span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">weight</span><span class="s2">(</span><span class="s5">1f</span><span class="s2">))</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">errorMessage</span><span class="s2">.</span><span class="s1">isNotEmpty</span><span class="s2">()) {</span>
+            <span class="s1">Text</span><span class="s2">(</span><span class="s1">errorMessage</span><span class="s2">, </span><span class="s1">color </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">colorScheme</span><span class="s2">.</span><span class="s1">error</span><span class="s2">)</span>
+            <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+        <span class="s2">}</span>
+
+        <span class="s1">Button</span><span class="s2">(</span><span class="s1">onClick </span><span class="s2">= {</span>
+            <span class="s0">val </span><span class="s1">selectedDate </span><span class="s2">= </span><span class="s1">datePickerState</span><span class="s2">.</span><span class="s1">selectedDateMillis</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">selectedDate </span><span class="s2">== </span><span class="s0">null</span><span class="s2">) {</span>
+                <span class="s1">errorMessage </span><span class="s2">= </span><span class="s4">&quot;Por favor selecciona una fecha&quot;</span>
+            <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">selectedDate </span><span class="s2">&lt; </span><span class="s1">System</span><span class="s2">.</span><span class="s1">currentTimeMillis</span><span class="s2">() - </span><span class="s5">86400000</span><span class="s2">) {</span>
+                <span class="s3">// Validación: fecha no anterior a hoy</span>
+                <span class="s1">errorMessage </span><span class="s2">= </span><span class="s4">&quot;La fecha no puede ser en el pasado&quot;</span>
+            <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                <span class="s0">val </span><span class="s1">formattedDate </span><span class="s2">= </span><span class="s1">SimpleDateFormat</span><span class="s2">(</span><span class="s4">&quot;dd/MM/yyyy&quot;</span><span class="s2">, </span><span class="s1">Locale</span><span class="s2">.</span><span class="s1">getDefault</span><span class="s2">()).</span><span class="s1">format</span><span class="s2">(</span><span class="s1">Date</span><span class="s2">(</span><span class="s1">selectedDate</span><span class="s2">))</span>
+
+                <span class="s3">// Guardamos usando la lógica centralizada del ViewModel</span>
+                <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">saveTask</span><span class="s2">(</span>
+                    <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftTitle</span><span class="s2">,</span>
+                    <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftDescription</span><span class="s2">,</span>
+                    <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftPriority</span><span class="s2">,</span>
+                    <span class="s1">formattedDate</span>
+                <span class="s2">)</span>
+
+                <span class="s3">// Limpiamos variables temporales</span>
+                <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftTitle </span><span class="s2">= </span><span class="s4">&quot;&quot;</span>
+                <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftDescription </span><span class="s2">= </span><span class="s4">&quot;&quot;</span>
+                <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftPriority </span><span class="s2">= </span><span class="s4">&quot;Media&quot;</span>
+
+                <span class="s1">navController</span><span class="s2">.</span><span class="s1">navigate</span><span class="s2">(</span><span class="s4">&quot;home&quot;</span><span class="s2">) {</span>
+                    <span class="s1">popUpTo</span><span class="s2">(</span><span class="s4">&quot;home&quot;</span><span class="s2">) { </span><span class="s1">inclusive </span><span class="s2">= </span><span class="s0">true </span><span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}, </span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">()) {</span>
+            <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Guardar Tarea&quot;</span><span class="s2">)</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+
+<span class="s3">// --- 4. PANTALLA LISTA TAREAS LOCALES ---</span>
+<span class="s1">@OptIn</span><span class="s2">(</span><span class="s1">ExperimentalMaterial3Api::</span><span class="s0">class</span><span class="s2">)</span>
+<span class="s1">@Composable</span>
+<span class="s0">fun </span><span class="s1">LocalTasksScreen</span><span class="s2">(</span><span class="s1">navController: NavController</span><span class="s2">, </span><span class="s1">viewModel: TaskViewModel</span><span class="s2">) {</span>
+    <span class="s0">val </span><span class="s1">tasksLocal by viewModel</span><span class="s2">.</span><span class="s1">localTasks</span><span class="s2">.</span><span class="s1">collectAsState</span><span class="s2">()</span>
+    <span class="s0">var </span><span class="s1">filterState by remember </span><span class="s2">{ </span><span class="s1">mutableStateOf</span><span class="s2">(</span><span class="s4">&quot;Todos&quot;</span><span class="s2">) } </span><span class="s3">// Todos / Pendientes / Completadas</span>
+
+    <span class="s3">// Aplicación del filtro en memoria</span>
+    <span class="s0">val </span><span class="s1">filteredTasks </span><span class="s2">= </span><span class="s1">tasksLocal</span><span class="s2">.</span><span class="s1">filter </span><span class="s2">{ </span><span class="s1">task </span><span class="s2">-&gt;</span>
+        <span class="s0">val </span><span class="s1">isCompleted </span><span class="s2">= </span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;completed&quot;</span><span class="s2">] == </span><span class="s4">&quot;1&quot; </span><span class="s2">|| </span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;completed&quot;</span><span class="s2">] == </span><span class="s4">&quot;true&quot;</span>
+        <span class="s0">when </span><span class="s2">(</span><span class="s1">filterState</span><span class="s2">) {</span>
+            <span class="s4">&quot;Pendientes&quot; </span><span class="s2">-&gt; !</span><span class="s1">isCompleted</span>
+            <span class="s4">&quot;Completadas&quot; </span><span class="s2">-&gt; </span><span class="s1">isCompleted</span>
+            <span class="s0">else </span><span class="s2">-&gt; </span><span class="s0">true</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s1">Scaffold</span><span class="s2">(</span>
+        <span class="s1">floatingActionButton </span><span class="s2">= {</span>
+            <span class="s1">FloatingActionButton</span><span class="s2">(</span><span class="s1">onClick </span><span class="s2">= { </span><span class="s1">navController</span><span class="s2">.</span><span class="s1">navigate</span><span class="s2">(</span><span class="s4">&quot;create_step_1&quot;</span><span class="s2">) }) {</span>
+                <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;+&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">headlineMedium</span><span class="s2">)</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">) { </span><span class="s1">paddingValues </span><span class="s2">-&gt;</span>
+        <span class="s1">Column</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxSize</span><span class="s2">().</span><span class="s1">padding</span><span class="s2">(</span><span class="s1">paddingValues</span><span class="s2">).</span><span class="s1">padding</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">)) {</span>
+            <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Mis Tareas Locales&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">headlineSmall</span><span class="s2">)</span>
+            <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+            <span class="s3">// Fila de Filtros (Chips) exigidos en la rúbrica</span>
+            <span class="s1">Row</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">(), </span><span class="s1">horizontalArrangement </span><span class="s2">= </span><span class="s1">Arrangement</span><span class="s2">.</span><span class="s1">SpaceEvenly</span><span class="s2">) {</span>
+                <span class="s1">FilterChip</span><span class="s2">(</span><span class="s1">selected </span><span class="s2">= </span><span class="s1">filterState </span><span class="s2">== </span><span class="s4">&quot;Todos&quot;</span><span class="s2">, </span><span class="s1">onClick </span><span class="s2">= { </span><span class="s1">filterState </span><span class="s2">= </span><span class="s4">&quot;Todos&quot; </span><span class="s2">}, </span><span class="s1">label </span><span class="s2">= { </span><span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Todos&quot;</span><span class="s2">) })</span>
+                <span class="s1">FilterChip</span><span class="s2">(</span><span class="s1">selected </span><span class="s2">= </span><span class="s1">filterState </span><span class="s2">== </span><span class="s4">&quot;Pendientes&quot;</span><span class="s2">, </span><span class="s1">onClick </span><span class="s2">= { </span><span class="s1">filterState </span><span class="s2">= </span><span class="s4">&quot;Pendientes&quot; </span><span class="s2">}, </span><span class="s1">label </span><span class="s2">= { </span><span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Pendientes&quot;</span><span class="s2">) })</span>
+                <span class="s1">FilterChip</span><span class="s2">(</span><span class="s1">selected </span><span class="s2">= </span><span class="s1">filterState </span><span class="s2">== </span><span class="s4">&quot;Completadas&quot;</span><span class="s2">, </span><span class="s1">onClick </span><span class="s2">= { </span><span class="s1">filterState </span><span class="s2">= </span><span class="s4">&quot;Completadas&quot; </span><span class="s2">}, </span><span class="s1">label </span><span class="s2">= { </span><span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Completadas&quot;</span><span class="s2">) })</span>
+            <span class="s2">}</span>
+
+            <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+            <span class="s1">LazyColumn </span><span class="s2">{</span>
+                <span class="s1">items</span><span class="s2">(</span><span class="s1">filteredTasks</span><span class="s2">) { </span><span class="s1">task </span><span class="s2">-&gt;</span>
+                    <span class="s3">// Colores de prioridad exigidos para feedback visual</span>
+                    <span class="s0">val </span><span class="s1">cardColor </span><span class="s2">= </span><span class="s0">when</span><span class="s2">(</span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;priority&quot;</span><span class="s2">]) {</span>
+                        <span class="s4">&quot;Alta&quot; </span><span class="s2">-&gt; </span><span class="s1">Color</span><span class="s2">(</span><span class="s5">0xFFFFCDD2</span><span class="s2">)  </span><span class="s3">// Rojo suave</span>
+                        <span class="s4">&quot;Media&quot; </span><span class="s2">-&gt; </span><span class="s1">Color</span><span class="s2">(</span><span class="s5">0xFFFFF9C4</span><span class="s2">) </span><span class="s3">// Amarillo suave</span>
+                        <span class="s4">&quot;Baja&quot; </span><span class="s2">-&gt; </span><span class="s1">Color</span><span class="s2">(</span><span class="s5">0xFFC8E6C9</span><span class="s2">)  </span><span class="s3">// Verde suave</span>
+                        <span class="s0">else </span><span class="s2">-&gt; </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">colorScheme</span><span class="s2">.</span><span class="s1">surfaceVariant</span>
+                    <span class="s2">}</span>
+
+                    <span class="s1">Card</span><span class="s2">(</span>
+                        <span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">().</span><span class="s1">padding</span><span class="s2">(</span><span class="s1">vertical </span><span class="s2">= </span><span class="s5">4</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">),</span>
+                        <span class="s1">colors </span><span class="s2">= </span><span class="s1">CardDefaults</span><span class="s2">.</span><span class="s1">cardColors</span><span class="s2">(</span><span class="s1">containerColor </span><span class="s2">= </span><span class="s1">cardColor</span><span class="s2">)</span>
+                    <span class="s2">) {</span>
+                        <span class="s1">Column</span><span class="s2">(</span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">padding</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">)) {</span>
+                            <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Título: </span><span class="s0">${</span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;title&quot;</span><span class="s2">]</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">titleMedium</span><span class="s2">)</span>
+                            <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Prioridad: </span><span class="s0">${</span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;priority&quot;</span><span class="s2">]</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s2">)</span>
+                            <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Fecha: </span><span class="s0">${</span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;dueDate&quot;</span><span class="s2">]</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s2">)</span>
+
+                            <span class="s0">val </span><span class="s1">isCompleted </span><span class="s2">= </span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;completed&quot;</span><span class="s2">] == </span><span class="s4">&quot;1&quot; </span><span class="s2">|| </span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;completed&quot;</span><span class="s2">] == </span><span class="s4">&quot;true&quot;</span>
+                            <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Estado: </span><span class="s0">${if </span><span class="s2">(</span><span class="s1">isCompleted</span><span class="s2">) </span><span class="s4">&quot;Completada ✅&quot; </span><span class="s0">else </span><span class="s4">&quot;Pendiente ⏳&quot;</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s2">)</span>
+
+                            <span class="s1">Row</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">padding</span><span class="s2">(</span><span class="s1">top </span><span class="s2">= </span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">)) {</span>
+                                <span class="s1">Button</span><span class="s2">(</span>
+                                    <span class="s1">onClick </span><span class="s2">= { </span><span class="s1">viewModel</span><span class="s2">.</span><span class="s1">deleteTask</span><span class="s2">(</span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;id&quot;</span><span class="s2">]!!.</span><span class="s1">toInt</span><span class="s2">()) },</span>
+                                    <span class="s1">colors </span><span class="s2">= </span><span class="s1">ButtonDefaults</span><span class="s2">.</span><span class="s1">buttonColors</span><span class="s2">(</span><span class="s1">containerColor </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">colorScheme</span><span class="s2">.</span><span class="s1">error</span><span class="s2">)</span>
+                                <span class="s2">) {</span>
+                                    <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Eliminar&quot;</span><span class="s2">)</span>
+                                <span class="s2">}</span>
+
+                                <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">width</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+                                <span class="s1">Button</span><span class="s2">(</span><span class="s1">onClick </span><span class="s2">= {</span>
+                                    <span class="s3">// Preparamos los datos pre-llenados para la pantalla de edición</span>
+                                    <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftTitle </span><span class="s2">= </span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;title&quot;</span><span class="s2">] </span><span class="s1">?: </span><span class="s4">&quot;&quot;</span>
+                                    <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftDescription </span><span class="s2">= </span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;description&quot;</span><span class="s2">] </span><span class="s1">?: </span><span class="s4">&quot;&quot;</span>
+                                    <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftPriority </span><span class="s2">= </span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;priority&quot;</span><span class="s2">] </span><span class="s1">?: </span><span class="s4">&quot;Media&quot;</span>
+                                    <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftIdToEdit </span><span class="s2">= </span><span class="s1">task</span><span class="s2">[</span><span class="s4">&quot;id&quot;</span><span class="s2">]!!.</span><span class="s1">toInt</span><span class="s2">()</span>
+                                    <span class="s1">navController</span><span class="s2">.</span><span class="s1">navigate</span><span class="s2">(</span><span class="s4">&quot;edit_task&quot;</span><span class="s2">)</span>
+                                <span class="s2">}) {</span>
+                                    <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Editar&quot;</span><span class="s2">)</span>
+                                <span class="s2">}</span>
+                            <span class="s2">}</span>
+                        <span class="s2">}</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+
+<span class="s3">// --- 5. PANTALLA EDITAR TAREA ---</span>
+<span class="s1">@OptIn</span><span class="s2">(</span><span class="s1">ExperimentalMaterial3Api::</span><span class="s0">class</span><span class="s2">)</span>
+<span class="s1">@Composable</span>
+<span class="s0">fun </span><span class="s1">EditTaskScreen</span><span class="s2">(</span><span class="s1">navController: NavController</span><span class="s2">, </span><span class="s1">viewModel: TaskViewModel</span><span class="s2">) {</span>
+    <span class="s0">var </span><span class="s1">title by remember </span><span class="s2">{ </span><span class="s1">mutableStateOf</span><span class="s2">(</span><span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftTitle</span><span class="s2">) }</span>
+    <span class="s0">var </span><span class="s1">description by remember </span><span class="s2">{ </span><span class="s1">mutableStateOf</span><span class="s2">(</span><span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftDescription</span><span class="s2">) }</span>
+    <span class="s0">var </span><span class="s1">expanded by remember </span><span class="s2">{ </span><span class="s1">mutableStateOf</span><span class="s2">(</span><span class="s0">false</span><span class="s2">) }</span>
+    <span class="s0">val </span><span class="s1">priorities </span><span class="s2">= </span><span class="s1">listOf</span><span class="s2">(</span><span class="s4">&quot;Alta&quot;</span><span class="s2">, </span><span class="s4">&quot;Media&quot;</span><span class="s2">, </span><span class="s4">&quot;Baja&quot;</span><span class="s2">)</span>
+    <span class="s0">var </span><span class="s1">selectedPriority by remember </span><span class="s2">{ </span><span class="s1">mutableStateOf</span><span class="s2">(</span><span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftPriority</span><span class="s2">) }</span>
+
+    <span class="s1">Column</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">padding</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">).</span><span class="s1">fillMaxSize</span><span class="s2">()) {</span>
+        <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Modificar Tarea (Formulario Pre-llenado)&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">titleLarge</span><span class="s2">)</span>
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+        <span class="s1">OutlinedTextField</span><span class="s2">(</span><span class="s1">value </span><span class="s2">= </span><span class="s1">title</span><span class="s2">, </span><span class="s1">onValueChange </span><span class="s2">= { </span><span class="s1">title </span><span class="s2">= </span><span class="s1">it </span><span class="s2">}, </span><span class="s1">label </span><span class="s2">= { </span><span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Título&quot;</span><span class="s2">) }, </span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">())</span>
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+        <span class="s1">OutlinedTextField</span><span class="s2">(</span><span class="s1">value </span><span class="s2">= </span><span class="s1">description</span><span class="s2">, </span><span class="s1">onValueChange </span><span class="s2">= { </span><span class="s1">description </span><span class="s2">= </span><span class="s1">it </span><span class="s2">}, </span><span class="s1">label </span><span class="s2">= { </span><span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Descripción&quot;</span><span class="s2">) }, </span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">())</span>
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+        <span class="s1">ExposedDropdownMenuBox</span><span class="s2">(</span><span class="s1">expanded </span><span class="s2">= </span><span class="s1">expanded</span><span class="s2">, </span><span class="s1">onExpandedChange </span><span class="s2">= { </span><span class="s1">expanded </span><span class="s2">= !</span><span class="s1">expanded </span><span class="s2">}) {</span>
+            <span class="s1">OutlinedTextField</span><span class="s2">(</span>
+                <span class="s1">value </span><span class="s2">= </span><span class="s1">selectedPriority</span><span class="s2">, </span><span class="s1">onValueChange </span><span class="s2">= {}, </span><span class="s1">readOnly </span><span class="s2">= </span><span class="s0">true</span><span class="s2">, </span><span class="s1">label </span><span class="s2">= { </span><span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Prioridad&quot;</span><span class="s2">) },</span>
+                <span class="s1">trailingIcon </span><span class="s2">= { </span><span class="s1">ExposedDropdownMenuDefaults</span><span class="s2">.</span><span class="s1">TrailingIcon</span><span class="s2">(</span><span class="s1">expanded</span><span class="s2">) }, </span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">menuAnchor</span><span class="s2">().</span><span class="s1">fillMaxWidth</span><span class="s2">()</span>
+            <span class="s2">)</span>
+            <span class="s1">ExposedDropdownMenu</span><span class="s2">(</span><span class="s1">expanded </span><span class="s2">= </span><span class="s1">expanded</span><span class="s2">, </span><span class="s1">onDismissRequest </span><span class="s2">= { </span><span class="s1">expanded </span><span class="s2">= </span><span class="s0">false </span><span class="s2">}) {</span>
+                <span class="s1">priorities</span><span class="s2">.</span><span class="s1">forEach </span><span class="s2">{ </span><span class="s1">selection </span><span class="s2">-&gt;</span>
+                    <span class="s1">DropdownMenuItem</span><span class="s2">(</span><span class="s1">text </span><span class="s2">= { </span><span class="s1">Text</span><span class="s2">(</span><span class="s1">selection</span><span class="s2">) }, </span><span class="s1">onClick </span><span class="s2">= { </span><span class="s1">selectedPriority </span><span class="s2">= </span><span class="s1">selection</span><span class="s2">; </span><span class="s1">expanded </span><span class="s2">= </span><span class="s0">false </span><span class="s2">})</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">weight</span><span class="s2">(</span><span class="s5">1f</span><span class="s2">))</span>
+
+        <span class="s1">Row</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">(), </span><span class="s1">horizontalArrangement </span><span class="s2">= </span><span class="s1">Arrangement</span><span class="s2">.</span><span class="s1">SpaceBetween</span><span class="s2">) {</span>
+            <span class="s1">OutlinedButton</span><span class="s2">(</span><span class="s1">onClick </span><span class="s2">= {</span>
+                <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">draftIdToEdit </span><span class="s2">= </span><span class="s0">null </span><span class="s3">// Cancelamos la edición</span>
+                <span class="s1">navController</span><span class="s2">.</span><span class="s1">popBackStack</span><span class="s2">()</span>
+            <span class="s2">}, </span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">weight</span><span class="s2">(</span><span class="s5">1f</span><span class="s2">)) {</span>
+                <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Cancelar&quot;</span><span class="s2">)</span>
+            <span class="s2">}</span>
+            <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">width</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+            <span class="s1">Button</span><span class="s2">(</span><span class="s1">onClick </span><span class="s2">= {</span>
+                <span class="s3">// Para simplificar y heredar la misma fecha, o puedes mandarlo al paso 2 si quieres cambiar fecha.</span>
+                <span class="s3">// Aquí guardamos directamente manteniendo un string temporal o el formato previo.</span>
+                <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">saveTask</span><span class="s2">(</span><span class="s1">title</span><span class="s2">, </span><span class="s1">description</span><span class="s2">, </span><span class="s1">selectedPriority</span><span class="s2">, </span><span class="s4">&quot;Actualizada&quot;</span><span class="s2">)</span>
+                <span class="s1">navController</span><span class="s2">.</span><span class="s1">navigate</span><span class="s2">(</span><span class="s4">&quot;home&quot;</span><span class="s2">) { </span><span class="s1">popUpTo</span><span class="s2">(</span><span class="s4">&quot;home&quot;</span><span class="s2">) { </span><span class="s1">inclusive </span><span class="s2">= </span><span class="s0">true </span><span class="s2">} }</span>
+            <span class="s2">}, </span><span class="s1">enabled </span><span class="s2">= </span><span class="s1">title</span><span class="s2">.</span><span class="s1">isNotBlank</span><span class="s2">() &amp;&amp; </span><span class="s1">description</span><span class="s2">.</span><span class="s1">isNotBlank</span><span class="s2">(), </span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">weight</span><span class="s2">(</span><span class="s5">1f</span><span class="s2">)) {</span>
+                <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Guardar&quot;</span><span class="s2">)</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+
+<span class="s3">// --- 6. PANTALLA TAREAS API (JSONPLACEHOLDER) ---</span>
+<span class="s1">@Composable</span>
+<span class="s0">fun </span><span class="s1">ApiTasksScreen</span><span class="s2">(</span><span class="s1">navController: NavController</span><span class="s2">, </span><span class="s1">viewModel: TaskViewModel</span><span class="s2">) {</span>
+    <span class="s3">// Observamos el estado de la API</span>
+    <span class="s0">val </span><span class="s1">apiState by viewModel</span><span class="s2">.</span><span class="s1">apiState</span><span class="s2">.</span><span class="s1">collectAsState</span><span class="s2">()</span>
+
+    <span class="s3">// Llamamos a la API solo la primera vez que se abre la pantalla</span>
+    <span class="s1">LaunchedEffect</span><span class="s2">(</span><span class="s1">Unit</span><span class="s2">) {</span>
+        <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">fetchApiTasks</span><span class="s2">()</span>
+    <span class="s2">}</span>
+
+    <span class="s1">Column</span><span class="s2">(</span>
+        <span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxSize</span><span class="s2">().</span><span class="s1">padding</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">),</span>
+        <span class="s1">horizontalAlignment </span><span class="s2">= </span><span class="s1">Alignment</span><span class="s2">.</span><span class="s1">CenterHorizontally</span>
+    <span class="s2">) {</span>
+        <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Tareas desde JSONPlaceholder&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">titleLarge</span><span class="s2">)</span>
+        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+        <span class="s3">// Manejo de estados exigido en la rúbrica (0.3 pts)</span>
+        <span class="s0">when </span><span class="s2">(</span><span class="s1">apiState</span><span class="s2">) {</span>
+            <span class="s0">is </span><span class="s1">ApiState</span><span class="s2">.</span><span class="s1">Loading </span><span class="s2">-&gt; {</span>
+                <span class="s1">Box</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxSize</span><span class="s2">(), </span><span class="s1">contentAlignment </span><span class="s2">= </span><span class="s1">Alignment</span><span class="s2">.</span><span class="s1">Center</span><span class="s2">) {</span>
+                    <span class="s1">CircularProgressIndicator</span><span class="s2">()</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+            <span class="s0">is </span><span class="s1">ApiState</span><span class="s2">.</span><span class="s1">Error </span><span class="s2">-&gt; {</span>
+                <span class="s0">val </span><span class="s1">errorMessage </span><span class="s2">= (</span><span class="s1">apiState </span><span class="s0">as </span><span class="s1">ApiState</span><span class="s2">.</span><span class="s1">Error</span><span class="s2">).</span><span class="s1">message</span>
+                <span class="s1">Box</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxSize</span><span class="s2">(), </span><span class="s1">contentAlignment </span><span class="s2">= </span><span class="s1">Alignment</span><span class="s2">.</span><span class="s1">Center</span><span class="s2">) {</span>
+                    <span class="s1">Column</span><span class="s2">(</span><span class="s1">horizontalAlignment </span><span class="s2">= </span><span class="s1">Alignment</span><span class="s2">.</span><span class="s1">CenterHorizontally</span><span class="s2">) {</span>
+                        <span class="s1">Text</span><span class="s2">(</span><span class="s1">errorMessage</span><span class="s2">, </span><span class="s1">color </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">colorScheme</span><span class="s2">.</span><span class="s1">error</span><span class="s2">)</span>
+                        <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">height</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+                        <span class="s1">Button</span><span class="s2">(</span><span class="s1">onClick </span><span class="s2">= { </span><span class="s1">viewModel</span><span class="s2">.</span><span class="s1">fetchApiTasks</span><span class="s2">() }) {</span>
+                            <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Reintentar&quot;</span><span class="s2">)</span>
+                        <span class="s2">}</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+            <span class="s0">is </span><span class="s1">ApiState</span><span class="s2">.</span><span class="s1">Success </span><span class="s2">-&gt; {</span>
+                <span class="s0">val </span><span class="s1">tasks </span><span class="s2">= (</span><span class="s1">apiState </span><span class="s0">as </span><span class="s1">ApiState</span><span class="s2">.</span><span class="s1">Success</span><span class="s2">).</span><span class="s1">tasks</span>
+                <span class="s1">LazyColumn </span><span class="s2">{</span>
+                    <span class="s1">items</span><span class="s2">(</span><span class="s1">tasks</span><span class="s2">) { </span><span class="s1">apiTask </span><span class="s2">-&gt;</span>
+                        <span class="s1">Card</span><span class="s2">(</span>
+                            <span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">fillMaxWidth</span><span class="s2">().</span><span class="s1">padding</span><span class="s2">(</span><span class="s1">vertical </span><span class="s2">= </span><span class="s5">4</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">),</span>
+                            <span class="s1">colors </span><span class="s2">= </span><span class="s1">CardDefaults</span><span class="s2">.</span><span class="s1">cardColors</span><span class="s2">(</span><span class="s1">containerColor </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">colorScheme</span><span class="s2">.</span><span class="s1">surfaceVariant</span><span class="s2">)</span>
+                        <span class="s2">) {</span>
+                            <span class="s1">Row</span><span class="s2">(</span>
+                                <span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">padding</span><span class="s2">(</span><span class="s5">16</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">).</span><span class="s1">fillMaxWidth</span><span class="s2">(),</span>
+                                <span class="s1">horizontalArrangement </span><span class="s2">= </span><span class="s1">Arrangement</span><span class="s2">.</span><span class="s1">SpaceBetween</span><span class="s2">,</span>
+                                <span class="s1">verticalAlignment </span><span class="s2">= </span><span class="s1">Alignment</span><span class="s2">.</span><span class="s1">CenterVertically</span>
+                            <span class="s2">) {</span>
+                                <span class="s1">Column</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">weight</span><span class="s2">(</span><span class="s5">1f</span><span class="s2">)) {</span>
+                                    <span class="s1">Text</span><span class="s2">(</span><span class="s1">apiTask</span><span class="s2">.</span><span class="s1">title</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">titleMedium</span><span class="s2">)</span>
+                                    <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Estado API: </span><span class="s0">${if </span><span class="s2">(</span><span class="s1">apiTask</span><span class="s2">.</span><span class="s1">completed</span><span class="s2">) </span><span class="s4">&quot;Completada&quot; </span><span class="s0">else </span><span class="s4">&quot;Pendiente&quot;</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s2">, </span><span class="s1">style </span><span class="s2">= </span><span class="s1">MaterialTheme</span><span class="s2">.</span><span class="s1">typography</span><span class="s2">.</span><span class="s1">bodySmall</span><span class="s2">)</span>
+                                <span class="s2">}</span>
+
+                                <span class="s1">Spacer</span><span class="s2">(</span><span class="s1">modifier </span><span class="s2">= </span><span class="s1">Modifier</span><span class="s2">.</span><span class="s1">width</span><span class="s2">(</span><span class="s5">8</span><span class="s2">.</span><span class="s1">dp</span><span class="s2">))</span>
+
+                                <span class="s3">// Botón para guardar en la base local</span>
+                                <span class="s1">Button</span><span class="s2">(</span><span class="s1">onClick </span><span class="s2">= {</span>
+                                    <span class="s1">viewModel</span><span class="s2">.</span><span class="s1">saveApiTaskLocally</span><span class="s2">(</span><span class="s1">apiTask</span><span class="s2">)</span>
+                                    <span class="s3">// Feedback opcional de que se agregó</span>
+                                    <span class="s1">navController</span><span class="s2">.</span><span class="s1">navigate</span><span class="s2">(</span><span class="s4">&quot;local_tasks&quot;</span><span class="s2">)</span>
+                                <span class="s2">}) {</span>
+                                    <span class="s1">Text</span><span class="s2">(</span><span class="s4">&quot;Guardar&quot;</span><span class="s2">)</span>
+                                <span class="s2">}</span>
+                            <span class="s2">}</span>
+                        <span class="s2">}</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>
